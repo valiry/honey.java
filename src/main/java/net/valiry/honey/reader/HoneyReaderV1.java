@@ -10,6 +10,18 @@ import net.valiry.honey.HoneyWorld;
 public class HoneyReaderV1 extends HoneyReader {
 
     @Override
+    protected HoneyWorld readData(final byte[] bytes) {
+        final ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+        if (byteBuffer.getShort() != (short) 0xAFFE) {
+            throw new IllegalStateException("Invalid data");
+        }
+        if (byteBuffer.getShort() != 1) {
+            throw new IllegalStateException("Invalid version");
+        }
+        return this.read(byteBuffer);
+    }
+
+    @Override
     protected HoneyWorld read(final ByteBuffer byteBuffer) {
         final HoneyWorld honeyWorld = new HoneyWorld();
 

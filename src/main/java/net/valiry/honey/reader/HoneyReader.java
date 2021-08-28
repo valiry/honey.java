@@ -6,6 +6,22 @@ import net.valiry.honey.HoneyWorld;
 
 public abstract class HoneyReader {
 
+    /**
+     * Attempt to read honey data (including magic and version)
+     *
+     * @param bytes Byte array to read from
+     *
+     * @return Honey data
+     */
+    protected abstract HoneyWorld readData(byte[] bytes);
+
+    /**
+     * Attempt to read honey data (excluding magic and version)
+     *
+     * @param byteBuffer Byte buffer to read from
+     *
+     * @return Honey data
+     */
     protected abstract HoneyWorld read(ByteBuffer byteBuffer);
 
     protected byte[] readCompressed(final ByteBuffer byteBuffer) {

@@ -9,6 +9,11 @@ import net.valiry.honey.HoneyWorld;
 public class HoneyReaderV0 extends HoneyReader {
 
     @Override
+    protected HoneyWorld readData(final byte[] bytes) {
+        return this.read(null);
+    }
+
+    @Override
     protected HoneyWorld read(final ByteBuffer byteBuffer) {
         throw new IllegalStateException("Can't read version 0 (reserved for development)");
     }

@@ -15,11 +15,18 @@ class MyClass {
 
         byte[] bytes = new byte[0];
         world = HoneyReaders.read(bytes);
+
+        // See also:
+        // HoneyReaders.get(short version);
     }
 
     public void write(HoneyWorld world) {
         HoneyWriter writer = new HoneyWriterV1();
         byte[] data = writer.write(world); // Throws IOException
+
+        // See also:
+        // HoneyWriters.get(short version);
+        // HoneyWriters.writeWithLatest(HoneyWorld world);
     }
 
 }

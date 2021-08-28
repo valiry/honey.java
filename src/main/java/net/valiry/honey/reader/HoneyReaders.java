@@ -23,6 +23,7 @@ public class HoneyReaders {
 
     /**
      * Attempts to read a HoneyWorld from an input stream
+     * Tries to choose the correct reader by detecting the version
      *
      * @param inputStream The input stream
      *
@@ -30,18 +31,19 @@ public class HoneyReaders {
      *
      * @throws IOException See {@link InputStream#read()}
      */
-    public static HoneyWorld read(final InputStream inputStream) throws IOException {
-        return read(inputStream.readAllBytes());
+    public static HoneyWorld detectAndRead(final InputStream inputStream) throws IOException {
+        return detectAndRead(inputStream.readAllBytes());
     }
 
     /**
      * Attempts to read a HoneyWorld from a byte array
+     * Tries to choose the correct reader by detecting the version
      *
      * @param bytes The byte array
      *
      * @return A HoneyWorld
      */
-    public static HoneyWorld read(final byte[] bytes) {
+    public static HoneyWorld detectAndRead(final byte[] bytes) {
         final ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
         checkMagic(byteBuffer);
 
@@ -58,6 +60,10 @@ public class HoneyReaders {
         if (byteBuffer.getShort() != HONEY_MAGIC) {
             throw new IllegalStateException("Data is not in honey format");
         }
+    }
+
+    public static HoneyReader get(final short ver) {
+        return READER_MAP.get(ver);
     }
 
 }
