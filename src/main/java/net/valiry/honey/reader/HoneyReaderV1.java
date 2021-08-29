@@ -62,8 +62,10 @@ public class HoneyReaderV1 extends HoneyReader {
         }
 
         // Entities and tile entities
-        final byte[] entityNbt = byteBuffer.get() > 0 ? this.readCompressed(byteBuffer) : null;
-        final byte[] tileEntityNbt = byteBuffer.get() > 0 ? this.readCompressed(byteBuffer) : null;
+        final byte[] entityNbt = byteBuffer.get() > 0
+                ? this.readCompressed(byteBuffer) : null;
+        final byte[] tileEntityNbt = byteBuffer.get() > 0
+                ? this.readCompressed(byteBuffer) : null;
 
         return new HoneyChunk(HoneyChunk.ChunkId.of(x, z), sectionMap, entityNbt, tileEntityNbt);
     }

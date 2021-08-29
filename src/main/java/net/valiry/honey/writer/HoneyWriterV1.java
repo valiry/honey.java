@@ -32,6 +32,7 @@ public class HoneyWriterV1 extends HoneyWriter {
         for (final HoneyChunk chunk : nonEmptyChunks) {
             this.writeChunk(outputStream, chunk);
         }
+        System.out.println("written " + nonEmptyChunks.size() + " chunks");
 
         // Write meta
         outputStream.write(world.getMetadataNbt() != null ? 1 : 0);
@@ -60,7 +61,20 @@ public class HoneyWriterV1 extends HoneyWriter {
         // Chunk header - X + Z + section bitset
         outputStream.write(ByteBuffer.allocate(4).putInt(chunk.getId().getX()).array());
         outputStream.write(ByteBuffer.allocate(4).putInt(chunk.getId().getZ()).array());
-        outputStream.write(populatedSectionSet.toByteArray());
+        outputStream.write(this.pad(populatedSectionSet.toByteArray()));
+
+        for (final HoneyChunk.HoneyChunkSection section : chunk.getSectionMap().values()) {
+            if (!section.isEmpty()) {
+                int n = 0;
+                for (int x = 0; x < 16; x++) {
+                    for (int y = 0; y < 16; y++) {
+                        for (int z = 0; z < 16; z++) {
+                            outputStream.write(ByteBuffer.allocate(2).putShort(section.getStates()[n++]).array());
+                        }
+                    }
+                }
+            }
+        }
 
         // Entities
         outputStream.write(chunk.hasEntities() ? 1 : 0);
@@ -72,6 +86,16 @@ public class HoneyWriterV1 extends HoneyWriter {
         outputStream.write(chunk.hasTileEntities() ? 1 : 0);
         if (chunk.hasTileEntities()) {
             this.writeCompressed(outputStream, chunk.getTileEntityNbt());
+        }
+    }
+
+    private byte[] pad(final byte[] bytes) {
+        if (bytes.length == 0) {
+            return new byte[2];
+        } else if (bytes.length == 1) {
+            return new byte[] {bytes[0], 0};
+        } else {
+            return bytes;
         }
     }
 
