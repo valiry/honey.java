@@ -14,6 +14,7 @@ public class HoneyReaders {
         {
             this.put((short) 0x0000, new HoneyReaderV0());
             this.put((short) 0x0001, new HoneyReaderV1());
+            this.put((short) 0x0002, new HoneyReaderV2());
         }
     };
 

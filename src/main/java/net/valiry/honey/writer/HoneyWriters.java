@@ -10,9 +10,10 @@ public class HoneyWriters {
     private static final Map<Short, HoneyWriter> WRITER_MAP = new HashMap<>() {
         {
             this.put((short) 0x0001, new HoneyWriterV1());
+            this.put((short) 0x0002, new HoneyWriterV2());
         }
     };
-    private static final short LATEST_VER = 0x0001;
+    private static final short LATEST_VER = 0x0002;
 
     public static byte[] writeWithLatest(final HoneyWorld world) throws IOException {
         return WRITER_MAP.get(LATEST_VER).write(world);
