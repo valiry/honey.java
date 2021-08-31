@@ -1,5 +1,6 @@
 package net.valiry.honey.writer;
 
+import com.github.luben.zstd.Zstd;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,16 +30,12 @@ public class HoneyWriterV2 extends HoneyWriter {
                         .anyMatch(section -> !section.isEmpty()))
                 .collect(Collectors.toList());
 
-        // Header - Chunk amount
-        finalOutputStream.write(ByteBuffer.allocate(4).putInt(nonEmptyChunks.size()).array());
-
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         // Write chunks
         for (final HoneyChunk chunk : nonEmptyChunks) {
             this.writeChunk(outputStream, chunk);
         }
-        System.out.println("written " + nonEmptyChunks.size() + " chunks");
 
         // Write meta
         outputStream.write(world.getMetadataNbt() != null ? 1 : 0);
@@ -49,8 +46,13 @@ public class HoneyWriterV2 extends HoneyWriter {
         // Compress if needed
         final byte[] bytes = outputStream.toByteArray();
         if (this.compress) {
-            this.writeCompressed(finalOutputStream, bytes);
+            final byte[] compressed = Zstd.compress(bytes);
+            finalOutputStream.write(ByteBuffer.allocate(4).putInt(compressed.length).array());
+            finalOutputStream.write(ByteBuffer.allocate(4).putInt(bytes.length).array());
+            finalOutputStream.write(ByteBuffer.allocate(4).putInt(nonEmptyChunks.size()).array());
+            finalOutputStream.write(compressed);
         } else {
+            finalOutputStream.write(ByteBuffer.allocate(4).putInt(nonEmptyChunks.size()).array());
             finalOutputStream.write(bytes);
         }
 

@@ -32,7 +32,6 @@ public class HoneyWriterV1 extends HoneyWriter {
         for (final HoneyChunk chunk : nonEmptyChunks) {
             this.writeChunk(outputStream, chunk);
         }
-        System.out.println("written " + nonEmptyChunks.size() + " chunks");
 
         // Write meta
         outputStream.write(world.getMetadataNbt() != null ? 1 : 0);

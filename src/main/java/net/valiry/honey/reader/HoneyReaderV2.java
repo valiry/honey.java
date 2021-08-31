@@ -1,5 +1,6 @@
 package net.valiry.honey.reader;
 
+import com.github.luben.zstd.Zstd;
 import java.nio.ByteBuffer;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -25,17 +26,27 @@ public class HoneyReaderV2 extends HoneyReader {
     protected HoneyWorld read(ByteBuffer byteBuffer) {
         final HoneyWorld honeyWorld = new HoneyWorld();
 
+        final int compLen;
+        final int uncompLen;
+
         // Header
         final short protocolVer = byteBuffer.getShort();
         honeyWorld.setProtocolVersion(protocolVer);
         final byte compScheme = byteBuffer.get();
-        final int storedChunks = byteBuffer.getInt();
-
-        // Decompress if needed
         if (compScheme == 1) {
-            byteBuffer = ByteBuffer.wrap(this.readCompressed(byteBuffer));
+            compLen = byteBuffer.getInt();
+            uncompLen = byteBuffer.getInt();
         } else if (compScheme != 0) {
             throw new IllegalStateException("Unknown compression scheme: " + compScheme);
+        } else {
+            compLen = uncompLen = -1;
+        }
+        final int storedChunks = byteBuffer.getInt();
+
+        if (compLen != -1) {
+            final byte[] bytes = new byte[compLen];
+            byteBuffer.get(bytes);
+            byteBuffer = ByteBuffer.wrap(Zstd.decompress(bytes, uncompLen));
         }
 
         // Chunks

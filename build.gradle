@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'net.valiry'
-version '1.1.0'
+version '1.1.1'
 
 repositories {
     mavenCentral()
@@ -19,7 +19,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'net.valiry'
             artifactId = 'honey'
-            version = '1.1.0'
+            version = '1.1.1'
 
             from components.java
         }
